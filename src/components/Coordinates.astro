@@ -29,7 +29,7 @@ import grassBlock from '../assets/grassblock.png'
 
 <script>
 import { effect } from 'nanostores';
-import { convertedCoords, coords, Dimension, dimension } from '../portal.ts';
+import { convertedCoords, coords, Dimension, dimension, type Coords } from '../portal.ts';
 
 const netherContainer = document.getElementById('nether') as HTMLDivElement;
 const overworldContainer = document.getElementById('overworld') as HTMLDivElement;
@@ -40,31 +40,29 @@ function getCoordElements(container: HTMLDivElement) {
     return { xElem, zElem };
 }
 
-const { xElem: netherX, zElem: netherZ } = getCoordElements(netherContainer);
-const { xElem: overworldX, zElem: overworldZ } = getCoordElements(overworldContainer);
-
-const setCoords = (xElem: HTMLSpanElement, zElem: HTMLSpanElement, coords: { x: number, z: number} | undefined) => {
-    xElem.textContent = `X: ${coords?.x ?? '-'}`;
-    zElem.textContent = `Z: ${coords?.z ?? '-'}`;
+const setCoords = (container: HTMLDivElement, coords: Coords | undefined) => {
+    const { xElem: xCoord, zElem: zCoord } = getCoordElements(container)
+    xCoord.textContent = `X: ${coords?.x ?? '-'}`;
+    zCoord.textContent = `Z: ${coords?.z ?? '-'}`;
 };
 
 effect([convertedCoords, coords, dimension], (convertedCoords, coords, dimension) => {
     switch (dimension) {
         case Dimension.Overworld:
-            setCoords(overworldX, overworldZ, coords);
-            setCoords(netherX, netherZ, convertedCoords);
+            setCoords(overworldContainer, coords);
+            setCoords(netherContainer, convertedCoords);
             break;
         case Dimension.Nether:
-            setCoords(netherX, netherZ, coords);
-            setCoords(overworldX, overworldZ, convertedCoords);
+            setCoords(netherContainer, coords);
+            setCoords(overworldContainer, convertedCoords);
             break;
         default:
-            setCoords(overworldX, overworldZ, undefined);
-            setCoords(netherX, netherZ, undefined);
+            setCoords(overworldContainer, undefined);
+            setCoords(netherContainer, undefined);
     }
     return () => {
-        setCoords(overworldX, overworldZ, undefined);
-        setCoords(netherX, netherZ, undefined);
+        setCoords(overworldContainer, undefined);
+        setCoords(netherContainer, undefined);
     };
 });
 </script>
