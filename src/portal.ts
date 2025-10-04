@@ -1,6 +1,6 @@
 import { atom, computed } from "nanostores";
 
-type Coords = { x: number; z: number };
+export type Coords = { x: number; z: number };
 export const coords = atom<Coords | undefined>(undefined);
 
 export enum Dimension {
