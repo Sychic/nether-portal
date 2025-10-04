@@ -1,0 +1,7 @@
+{
+  "name": "nether-portal",
+  "compatibility_date": "2025-10-03",
+  "assets": {
+    "directory": "./dist"
+  }
+}
