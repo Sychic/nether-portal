@@ -31,6 +31,19 @@ import background from '../assets/background.svg';
 	</main>
 </div>
 
+<script>
+import { parseCoords, coords, dimension } from "../portal";
+
+document.addEventListener('paste', (event) => {
+	const paste = event.clipboardData!.getData('text');
+	const { dimension: parsedDimension, coords: parsedCoords } = parseCoords(paste) || {};
+	if (parsedCoords && parsedDimension) {
+		coords.set(parsedCoords)
+		dimension.set(parsedDimension)
+	}
+});
+</script>
+
 <style>
 	#background {
 		position: fixed;
