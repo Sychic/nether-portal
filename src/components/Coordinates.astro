@@ -27,6 +27,48 @@ import grassBlock from '../assets/grassblock.png'
     </div>
 </div>
 
+<script>
+import { effect } from 'nanostores';
+import { convertedCoords, coords, Dimension, dimension } from '../portal.ts';
+
+const netherContainer = document.getElementById('nether') as HTMLDivElement;
+const overworldContainer = document.getElementById('overworld') as HTMLDivElement;
+
+function getCoordElements(container: HTMLDivElement) {
+    const xElem = container.querySelector('.x') as HTMLSpanElement;
+    const zElem = container.querySelector('.z') as HTMLSpanElement;
+    return { xElem, zElem };
+}
+
+const { xElem: netherX, zElem: netherZ } = getCoordElements(netherContainer);
+const { xElem: overworldX, zElem: overworldZ } = getCoordElements(overworldContainer);
+
+const setCoords = (xElem: HTMLSpanElement, zElem: HTMLSpanElement, coords: { x: number, z: number} | undefined) => {
+    xElem.textContent = `X: ${coords?.x ?? '-'}`;
+    zElem.textContent = `Z: ${coords?.z ?? '-'}`;
+};
+
+effect([convertedCoords, coords, dimension], (convertedCoords, coords, dimension) => {
+    switch (dimension) {
+        case Dimension.Overworld:
+            setCoords(overworldX, overworldZ, coords);
+            setCoords(netherX, netherZ, convertedCoords);
+            break;
+        case Dimension.Nether:
+            setCoords(netherX, netherZ, coords);
+            setCoords(overworldX, overworldZ, convertedCoords);
+            break;
+        default:
+            setCoords(overworldX, overworldZ, undefined);
+            setCoords(netherX, netherZ, undefined);
+    }
+    return () => {
+        setCoords(overworldX, overworldZ, undefined);
+        setCoords(netherX, netherZ, undefined);
+    };
+});
+</script>
+
 <style>
     .header {
         display: flex;
