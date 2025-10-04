@@ -7,11 +7,21 @@
     +
     <kbd>C</kbd>
     ingame and 
-    <kbd>Ctrl</kbd>
+    <kbd id="super">Ctrl</kbd>
     +
     <kbd>V</kbd>
     here.
 </div>
+
+<script>
+const superKey = document.getElementById("super")
+
+const userAgent = navigator.userAgent.toLowerCase()
+
+if (userAgent.includes('mac')) {
+    superKey!.textContent = "⌘"
+}
+</script>
 
 <style>
 kbd {
