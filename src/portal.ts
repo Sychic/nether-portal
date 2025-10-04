@@ -5,7 +5,7 @@ export const coords = atom<Coords | undefined>(undefined);
 
 export enum Dimension {
     Overworld = "overworld",
-    Nether = "nether"
+    Nether = "the_nether"
 }
 export const dimension = atom<Dimension | undefined>(undefined);
 
