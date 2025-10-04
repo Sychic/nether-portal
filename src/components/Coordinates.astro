@@ -1,0 +1,59 @@
+---
+import { Image } from 'astro:assets'
+import netherrack from '../assets/netherrack.png'
+import grassBlock from '../assets/grassblock.png'
+---
+
+<div id="coordinates">
+    <div id="overworld"> 
+        <div class="header">
+            <Image src={grassBlock} alt="Grass Block" />
+            <h1>Overworld</h1>
+        </div>
+        <div class="coords">
+            <span class="x coord">Overworld X</span>
+            <span class="z coord">Overworld Z</span>
+        </div>
+    </div>
+    <div id="nether">
+        <div class="header">
+            <Image src={netherrack} alt="Netherrack" />
+            <h1>Nether</h1>
+        </div>
+        <div class="coords">
+            <span class="x coord">Nether X</span>
+            <span class="z coord">Nether Z</span>
+        </div>
+    </div>
+</div>
+
+<style>
+    .header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .header img {
+        height: 2em;
+        width: auto;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .coords {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .coord {
+        font-family: 'Courier New', Courier, monospace;
+        background: rgb(255, 248, 232);
+        padding: 4px 8px;
+        border-radius: 4px;
+        user-select: all;
+    }
+</style>
