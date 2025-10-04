@@ -3,7 +3,7 @@ import { atom, computed } from "nanostores";
 type Coords = { x: number; z: number };
 export const coords = atom<Coords | undefined>(undefined);
 
-enum Dimension {
+export enum Dimension {
     Overworld = "overworld",
     Nether = "nether"
 }
