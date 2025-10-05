@@ -9,14 +9,17 @@ import Instructions from './Instructions.astro';
 	<img id="background" src={background.src} alt="" fetchpriority="high" />
 	<main>
 		<section id="hero">
-			<section id="header" >
-				<a href="/" rel="noreferrer">
-					<img src={portalIcon.src} width="48" height="48" alt="Astro Homepage" />
-					<h1>Nether Portal Helper</h1>
-				</a>
-			</section>
-			<Instructions />
-			<Coordinates />
+
+			<div id="content">
+				<section id="header" >
+					<a href="/" rel="noreferrer">
+						<img src={portalIcon.src} width="48" height="48" alt="Astro Homepage" />
+						<h1>Nether Portal Helper</h1>
+					</a>
+				</section>
+				<Instructions />
+				<Coordinates />
+			</div>
 		</section>
 	</main>
 </div>
@@ -48,6 +51,14 @@ document.addEventListener('paste', (event) => {
 	#container {
 		font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
 		height: 100%;
+	}
+
+	#content {
+		border-image-source: url('/nineslice.png');
+		border-image-slice: 4 fill;
+		border-image-width: 0.5em;
+		border-image-repeat: repeat;
+		padding: 1em;
 	}
 
 	main {
