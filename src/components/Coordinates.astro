@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets'
 import netherrack from '../assets/netherrack.png'
 import grassBlock from '../assets/grassblock.png'
+import '../styles/monocraft.css'
 ---
 
 <div id="coordinates">
@@ -90,7 +91,7 @@ effect([convertedCoords, coords, dimension], (convertedCoords, coords, dimension
     }
 
     .coord {
-        font-family: 'Courier New', Courier, monospace;
+        font-family: 'Monocraft', 'Courier New', Courier, monospace;
         background: rgb(255, 248, 232);
         padding: 4px 8px;
         border-radius: 4px;
