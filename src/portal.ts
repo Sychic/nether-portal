@@ -14,9 +14,9 @@ export const convertedCoords = computed(
     ($coords, $dimension) => {
         if (!$coords || $dimension === undefined) return undefined;
         if ($dimension === Dimension.Overworld) {
-            return { x: $coords.x / 8, z: $coords.z / 8 };
+            return { x: Math.floor($coords.x / 8), z: Math.floor($coords.z / 8) };
         } else {
-            return { x: $coords.x * 8, z: $coords.z * 8 };
+            return { x: Math.floor($coords.x * 8), z: Math.floor($coords.z * 8) };
         }
     }
 );
@@ -31,8 +31,8 @@ export const parseCoords = (text: string) => {
     return {
         dimension: dimension as Dimension,
         coords: {
-            x: Number(x),
-            z: Number(z)
+            x: Math.round(Number(x)),
+            z: Math.round(Number(z))
         }
     };
 }
