@@ -12,8 +12,12 @@ import '../styles/monocraft.css'
             <h1>Overworld</h1>
         </div>
         <div class="coords">
-            <span class="x coord">Overworld X</span>
-            <span class="z coord">Overworld Z</span>
+            <div class="coord">
+                X: <span class="x" contenteditable="false"></span>
+            </div>
+            <div class="coord">
+                Z: <span class="z" contenteditable="false"></span>
+            </div>
         </div>
     </div>
     <div id="nether">
@@ -22,8 +26,12 @@ import '../styles/monocraft.css'
             <h1>Nether</h1>
         </div>
         <div class="coords">
-            <span class="x coord">Nether X</span>
-            <span class="z coord">Nether Z</span>
+            <div class="coord">
+                X: <span class="x" contenteditable="false"></span>
+            </div>
+            <div class="coord">
+                Z: <span class="z" contenteditable="false"></span>
+            </div>
         </div>
     </div>
 </div>
@@ -35,6 +43,20 @@ import { convertedCoords, coords, Dimension, dimension, type Coords } from '../p
 const netherContainer = document.getElementById('nether') as HTMLDivElement;
 const overworldContainer = document.getElementById('overworld') as HTMLDivElement;
 
+function setupFocus(container: HTMLDivElement) {
+    const { xElem, zElem } = getCoordElements(container);
+    xElem.parentElement?.addEventListener('click', () => {
+        console.log('X coordinate clicked');
+        xElem.focus();
+    });
+    zElem.parentElement?.addEventListener('click', () => {
+        console.log('Z coordinate clicked');
+        zElem.focus();
+    });
+}
+setupFocus(netherContainer);
+setupFocus(overworldContainer);
+
 function getCoordElements(container: HTMLDivElement) {
     const xElem = container.querySelector('.x') as HTMLSpanElement;
     const zElem = container.querySelector('.z') as HTMLSpanElement;
@@ -43,8 +65,8 @@ function getCoordElements(container: HTMLDivElement) {
 
 const setCoords = (container: HTMLDivElement, coords: Coords | undefined) => {
     const { xElem: xCoord, zElem: zCoord } = getCoordElements(container)
-    xCoord.textContent = `X: ${coords?.x ?? '-'}`;
-    zCoord.textContent = `Z: ${coords?.z ?? '-'}`;
+    xCoord.textContent = `${coords?.x ?? '-'}`;
+    zCoord.textContent = `${coords?.z ?? '-'}`;
 };
 
 effect([convertedCoords, coords, dimension], (convertedCoords, coords, dimension) => {
@@ -92,9 +114,16 @@ effect([convertedCoords, coords, dimension], (convertedCoords, coords, dimension
 
     .coord {
         font-family: 'Monocraft', 'Courier New', Courier, monospace;
-        background: rgb(255, 248, 232);
+        color: rgb(238, 238, 238);
+        background: rgb(0, 0, 0);
         padding: 4px 8px;
-        border-radius: 4px;
-        user-select: all;
+        border: 2px solid rgb(160, 160, 160);
+        cursor: text;
+    }
+
+    input[type="text"] {
+        font-family: 'Monocraft', 'Courier New', Courier, monospace;
+        font-size: 1em;
+        width: auto;
     }
 </style>
