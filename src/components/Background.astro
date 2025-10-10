@@ -1,0 +1,39 @@
+---
+---
+<div id="background" class="dirt">
+    <div class="grass"></div>
+</div>
+
+<style>
+    @property --grid-size {
+        syntax: '<length>';
+        inherits: false;
+        initial-value: 64px;
+    }
+
+    .grass {
+        background-image: url("/blocks/grassblock.png");
+        background-repeat: repeat-x;
+        image-rendering: crisp-edges;
+        background-size: var(--grid-size);
+        position: absolute;
+        width: 100%;
+        height: var(--grid-size);
+        z-index: -1;
+    }
+
+    .dirt {
+        background-image: url("/blocks/dirt.png");
+        background-size: var(--grid-size);
+        image-rendering: crisp-edges;
+        background-repeat: repeat;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: -5;
+    }
+</style>
+
+<script>
+
+</script>
