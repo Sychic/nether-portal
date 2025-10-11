@@ -26,14 +26,14 @@ import Background from './Background.astro';
 </div>
 
 <script>
-import { parseCoords, coords, dimension } from "../portal";
+import { parseCoords, xCoord, zCoord } from "../portal";
 
 document.addEventListener('paste', (event) => {
 	const paste = event.clipboardData!.getData('text');
 	const { dimension: parsedDimension, coords: parsedCoords } = parseCoords(paste) || {};
 	if (parsedCoords && parsedDimension) {
-		coords.set(parsedCoords)
-		dimension.set(parsedDimension)
+		xCoord.set({ value: parsedCoords.x, dimension: parsedDimension })
+		zCoord.set({ value: parsedCoords.z, dimension: parsedDimension })
 	}
 });
 </script>

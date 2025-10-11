@@ -13,24 +13,24 @@ import '../styles/monocraft.css'
         </div>
         <div class="coords">
             <div class="coord">
-                X: <span class="x" contenteditable="false"></span>
+                X: <span class="x" contenteditable="plaintext-only"></span>
             </div>
             <div class="coord">
-                Z: <span class="z" contenteditable="false"></span>
+                Z: <span class="z" contenteditable="plaintext-only"></span>
             </div>
         </div>
     </div>
-    <div id="nether">
+    <div id="the_nether">
         <div class="header">
             <Image src={netherrack} alt="Netherrack" />
             <h1>Nether</h1>
         </div>
         <div class="coords">
             <div class="coord">
-                X: <span class="x" contenteditable="false"></span>
+                X: <span class="x" contenteditable="plaintext-only"></span>
             </div>
             <div class="coord">
-                Z: <span class="z" contenteditable="false"></span>
+                Z: <span class="z" contenteditable="plaintext-only"></span>
             </div>
         </div>
     </div>
@@ -38,9 +38,9 @@ import '../styles/monocraft.css'
 
 <script>
 import { effect } from 'nanostores';
-import { convertedCoords, coords, Dimension, dimension, type Coords } from '../portal.ts';
+import { convertedXCoord, convertedZCoord, Dimension, TELEPORT_REGEX, xCoord, zCoord } from '../portal.ts';
 
-const netherContainer = document.getElementById('nether') as HTMLDivElement;
+const netherContainer = document.getElementById('the_nether') as HTMLDivElement;
 const overworldContainer = document.getElementById('overworld') as HTMLDivElement;
 
 function setupFocus(container: HTMLDivElement) {
@@ -63,30 +63,102 @@ function getCoordElements(container: HTMLDivElement) {
     return { xElem, zElem };
 }
 
-const setCoords = (container: HTMLDivElement, coords: Coords | undefined) => {
-    const { xElem: xCoord, zElem: zCoord } = getCoordElements(container)
-    xCoord.textContent = `${coords?.x ?? '-'}`;
-    zCoord.textContent = `${coords?.z ?? '-'}`;
-};
+function setXCoord(container: HTMLDivElement, value: number | undefined) {
+    getCoordElements(container).xElem.textContent = `${value ?? ""}`
+}
 
-effect([convertedCoords, coords, dimension], (convertedCoords, coords, dimension) => {
-    switch (dimension) {
+function setZCoord(container: HTMLDivElement, value: number | undefined) {
+    getCoordElements(container).zElem.textContent = `${value ?? ""}`
+}
+
+effect([xCoord, convertedXCoord], (xCoord, convertedXCoord) => {
+    switch (xCoord?.dimension) {
         case Dimension.Overworld:
-            setCoords(overworldContainer, coords);
-            setCoords(netherContainer, convertedCoords);
+            setXCoord(overworldContainer, xCoord.value)
+            setXCoord(netherContainer, convertedXCoord)
             break;
         case Dimension.Nether:
-            setCoords(netherContainer, coords);
-            setCoords(overworldContainer, convertedCoords);
+            setXCoord(netherContainer, xCoord.value)
+            setXCoord(overworldContainer, convertedXCoord)
             break;
         default:
-            setCoords(overworldContainer, undefined);
-            setCoords(netherContainer, undefined);
+            setXCoord(overworldContainer, undefined)
+            setXCoord(netherContainer, undefined)
     }
     return () => {
-        setCoords(overworldContainer, undefined);
-        setCoords(netherContainer, undefined);
-    };
+        setXCoord(overworldContainer, undefined)
+        setXCoord(netherContainer, undefined)
+    }
+})
+
+effect([zCoord, convertedZCoord], (zCoord, convertedZCoord) => {
+    switch (zCoord?.dimension) {
+        case Dimension.Overworld:
+            setZCoord(overworldContainer, zCoord.value)
+            setZCoord(netherContainer, convertedZCoord)
+            break;
+        case Dimension.Nether:
+            setZCoord(netherContainer, zCoord.value)
+            setZCoord(overworldContainer, convertedZCoord)
+            break;
+        default:
+            setZCoord(overworldContainer, undefined)
+            setZCoord(netherContainer, undefined)
+    }
+    return () => {
+        setZCoord(overworldContainer, undefined)
+        setZCoord(netherContainer, undefined)
+    }
+})
+
+function insertTextAtCaret(text: string) {
+    const sel = window.getSelection();
+    if (!sel?.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents(); // remove selected text
+
+    const textNode = document.createTextNode(text);
+    range.insertNode(textNode);
+
+    // Move caret after inserted text
+    range.setStartAfter(textNode);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
+document.querySelectorAll('span[contenteditable]').forEach(span => {
+    span.addEventListener('beforeinput', (e) => {
+        const data = (e as InputEvent).data;
+        if (data && !/[-0-9\.]/.test(data)) {
+            e.preventDefault();
+        }
+    })
+    span.addEventListener('keydown', (e) => {
+        if ((e as KeyboardEvent).key === 'Enter') e.preventDefault();
+    });
+    span.addEventListener('paste', (e) => {
+        const text = (e as ClipboardEvent).clipboardData!.getData("text")
+        e.preventDefault();
+        if (TELEPORT_REGEX.test(text)) return; // allow pasting full command
+        console.log('Pasting text:', text);
+        e.stopPropagation();
+        const filtered = text
+            .replace(/\r?\n/g, '')
+            .replace(/[^-0-9\.]/g, '');
+        insertTextAtCaret(filtered);
+    });
+    span.addEventListener('focusout', (e) => {
+        const parsed = parseInt(span.textContent)
+        if (Number.isNaN(parsed)) return;
+        const dimension = span.parentElement!.parentElement!.parentElement!.id as Dimension
+        if (span.classList.contains("x")) {
+            xCoord.set({ value: parsed, dimension: dimension })
+        } else if (span.classList.contains("z")) {
+            zCoord.set({ value: parsed, dimension: dimension })
+        }
+    })
 });
 </script>
 
@@ -119,11 +191,14 @@ effect([convertedCoords, coords, dimension], (convertedCoords, coords, dimension
         padding: 4px 8px;
         border: 2px solid rgb(160, 160, 160);
         cursor: text;
+        min-width: 5ch;
     }
 
-    input[type="text"] {
-        font-family: 'Monocraft', 'Courier New', Courier, monospace;
-        font-size: 1em;
-        width: auto;
+    span[contenteditable]:focus {
+        outline: none;
+    }
+
+    span[contenteditable] {
+        white-space: nowrap;
     }
 </style>
